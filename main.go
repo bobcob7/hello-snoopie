@@ -15,6 +15,7 @@ type output struct {
 	Path string `json:"path"`
 	RemoteAddr string `json:"remote-addr"`
 	Nonce string `json:"nonce"`
+	Headers http.Header `json:"header"`
 }
 
 func getNonce(r io.Reader, size int) string {
@@ -48,6 +49,7 @@ func main() {
 			"host": r.Host,
 			"path": r.URL.Path,
 			"remote-address": r.RemoteAddr,
+			"headers": r.Header,
 		})
 		err := json.NewEncoder(rw).Encode(output{
 			Method: r.Method,
@@ -55,6 +57,7 @@ func main() {
 			Path: r.URL.Path,
 			RemoteAddr: r.RemoteAddr,
 			Nonce: getNonce(rand.Reader, 16),
+			Headers: r.Header,
 		})
 		if err != nil {
 			log.WithField("error", err.Error()).Error("Failed to encode response")
